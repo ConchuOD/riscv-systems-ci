@@ -45,7 +45,7 @@ $(QEMU_RISCV32) $(QEMU_RISCV64): qemu/stamp
 
 qemu/stamp: \
 		$(shell git -C qemu ls-files --recurse-submodules | grep -v ' ' | sed 's@^@qemu/@' | xargs readlink -e)
-	env -C $(dir $@) ./configure --prefix="$(abspath $(shell readlink -f $(dir $@)/install))" --target-list=riscv64-softmmu,riscv32-softmmu
+	env -C $(dir $@) ./configure --prefix="$(abspath $(shell readlink -f $(dir $@)/install))" --target-list=riscv64-softmmu,riscv32-softmmu  --extra-cflags=-fno-cf-protection
 	$(MAKE) -C $(dir $@)
 	$(MAKE) -C $(dir $@) install
 	date > $@
@@ -77,7 +77,7 @@ kernel/%/stamp: \
 		toolchain/install.stamp \
 		$(shell git -C linux ls-files | sed 's@^@linux/@' | xargs readlink -e) \
 		$(GCC) $(SPARSE)
-	$(MAKE) -C linux/ O=$(abspath $(dir $@)) ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- C=1 CF="-Wsparse-error"
+	$(MAKE) -C linux/ O=$(abspath $(dir $@)) ARCH=riscv CROSS_COMPILE=riscv64-unknown-linux-gnu- C=1
 	date > $@
 
 kernel/rv64gc/%/.config: \
